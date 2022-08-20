@@ -1,0 +1,30 @@
+name: ospf_bgp
+
+topology:
+  nodes:
+    P1:    
+      kind: vr-sros
+      image: vrnetlab/vr-sros:21.7.R2
+      type: sr-1
+      license: "/home/anton/work/LAB/containerlab/LABS/license/license_21.key"
+    P2:    
+      kind: vr-sros
+      image: vrnetlab/vr-sros:21.7.R2
+      type: sr-1
+      license: "/home/anton/work/LAB/containerlab/LABS/license/license_21.key"
+    P3:    
+      kind: vr-sros
+      image: vrnetlab/vr-sros:21.7.R2
+      type: sr-1
+      license: "/home/anton/work/LAB/containerlab/LABS/license/license_21.key"
+    P4:    
+      kind: vr-sros
+      image: vrnetlab/vr-sros:21.7.R2
+      type: sr-1
+      license: "/home/anton/work/LAB/containerlab/LABS/license/license_21.key"
+  links:
+    - endpoints: ["P1:eth1", "P2:eth1"]
+    - endpoints: ["P1:eth2", "P3:eth2"]
+    - endpoints: ["P2:eth2", "P4:eth2"]
+    - endpoints: ["P3:eth1", "P4:eth1"]
+

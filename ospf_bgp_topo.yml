@@ -1,0 +1,111 @@
+lab_name: ospf_bgp
+
+loopback_prefix: 10.10.10.0/24
+p2p_prefix: 10.0.0.0/24
+
+nodes:
+  P1:
+    configuration:
+      configure:
+        router[router-name=Base]:
+          autonomous-system: 100
+          ospf[ospf-instance=0]:
+            admin-state: enable
+            area[area-id=0]:
+              interface[interface-name=system]:
+                  passive: true
+              interface[interface-name=to_P2]:
+                  interface-type: point-to-point
+              interface[interface-name=to_P3]:
+                  interface-type: point-to-point
+          bgp:
+            group[group-name=ibgp]:
+              family:
+                vpn-ipv4: true
+              type: internal
+            neighbor[ip-address=10.10.10.2]:
+              group: ibgp
+            neighbor[ip-address=10.10.10.3]:
+              group: ibgp
+            neighbor[ip-address=10.10.10.4]:
+              group: ibgp
+  P2:
+    configuration:
+      configure:
+        router[router-name=Base]:
+          autonomous-system: 100
+          ospf[ospf-instance=0]:
+            admin-state: enable
+            area[area-id=0]:
+              interface[interface-name=system]:
+                  passive: true
+              interface[interface-name=to_P1]:
+                  interface-type: point-to-point
+              interface[interface-name=to_P4]:
+                  interface-type: point-to-point
+          bgp:
+            group[group-name=ibgp]:
+              family:
+                vpn-ipv4: true
+              type: internal
+            neighbor[ip-address=10.10.10.1]:
+              group: ibgp
+            neighbor[ip-address=10.10.10.3]:
+              group: ibgp
+            neighbor[ip-address=10.10.10.4]:
+              group: ibgp
+  P3:
+    configuration:
+      configure:
+        router[router-name=Base]:
+          autonomous-system: 100
+          ospf[ospf-instance=0]:
+            admin-state: enable
+            area[area-id=0]:
+              interface[interface-name=system]:
+                  passive: true
+              interface[interface-name=to_P1]:
+                  interface-type: point-to-point
+              interface[interface-name=to_P4]:
+                  interface-type: point-to-point
+          bgp:
+            group[group-name=ibgp]:
+              family:
+                vpn-ipv4: true
+              type: internal
+            neighbor[ip-address=10.10.10.2]:
+              group: ibgp
+            neighbor[ip-address=10.10.10.1]:
+              group: ibgp
+            neighbor[ip-address=10.10.10.4]:
+              group: ibgp
+  P4:
+    configuration:
+      configure:
+        router[router-name=Base]:
+          autonomous-system: 100
+          ospf[ospf-instance=0]:
+            admin-state: enable
+            area[area-id=0]:
+              interface[interface-name=system]:
+                  passive: true
+              interface[interface-name=to_P2]:
+                  interface-type: point-to-point
+              interface[interface-name=to_P3]:
+                  interface-type: point-to-point
+          bgp:
+            group[group-name=ibgp]:
+              family:
+                vpn-ipv4: true
+              type: internal
+            neighbor[ip-address=10.10.10.2]:
+              group: ibgp
+            neighbor[ip-address=10.10.10.3]:
+              group: ibgp
+            neighbor[ip-address=10.10.10.1]:
+              group: ibgp
+topology:
+    "P1-eth1": "P2-eth1"
+    "P1-eth2": "P3-eth2"
+    "P2-eth2": "P4-eth2"
+    "P3-eth1": "P4-eth1"

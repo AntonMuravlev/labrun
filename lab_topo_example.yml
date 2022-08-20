@@ -1,0 +1,49 @@
+name: first_lab
+
+loopback_prefix: 10.10.10.0/24
+p2p_prefix: 10.0.0.0/24
+
+nodes:
+  P1:
+    configuration:
+      configure:
+        router[router-name=Base]:
+          ospf[ospf-instance=0]:
+            area[area-id=0]:
+              interface[interface-name=system]:
+                  passive: true
+              interface[interface-name=to_P2]:
+                  interface-type: point-to-point
+          bgp:
+            group[group-name=RR]:
+              family:
+                vpn-ipv4: true
+            neighbor[ip-address=55.55.55.55]:
+              group: RR
+    something_else: 
+      first_param: 123
+  P2:
+    configuration:
+      configure:
+        router[router-name=Base]:
+          ospf[ospf-instance=1]:
+            area[area-id=0]:
+              interface[interface-name=system]:
+                  passive: true
+              interface[interface-name=to_P1]:
+                  interface-type: point-to-point
+          bgp:
+            group[group-name=RR]:
+              family:
+                vpnv4: true
+            neighbor[ip-address=55.55.55.55]:
+              group: RR
+    something_else: 
+      first_param: 123
+topology:
+    "P1-eth1": "P2-eth1"
+    "P9-eth1": "P1-eth9"
+    "P2-eth2": "P3-eth2"
+    "P3-eth3": "P4-eth3"
+    "P4-eth4": "P1-eth4"
+    "P4-eth4": "P1-eth4"
