@@ -3,7 +3,7 @@
 # Built on Wed Sep 15 12:57:16 PDT 2021 by builder in /builds/c/217B/R2/panos/main/sros
 # Configuration format version 21.7 revision 0
 
-# Generated FRI AUG 19 13:41:22 2022 UTC
+# Generated SUN AUG 21 20:52:01 2022 UTC
 
 configure {
     card 1 {
@@ -165,27 +165,27 @@ configure {
         interface "system" {
             ipv4 {
                 primary {
-                    address 10.10.10.4
+                    address 10.10.10.1
                     prefix-length 32
                 }
             }
         }
         interface "to_P2" {
             admin-state enable
-            port 1/1/c2/1
+            port 1/1/c1/1
             ipv4 {
                 primary {
-                    address 10.0.0.5
+                    address 10.0.0.0
                     prefix-length 31
                 }
             }
         }
         interface "to_P3" {
             admin-state enable
-            port 1/1/c1/1
+            port 1/1/c2/1
             ipv4 {
                 primary {
-                    address 10.0.0.7
+                    address 10.0.0.2
                     prefix-length 31
                 }
             }
@@ -197,13 +197,13 @@ configure {
                     vpn-ipv4 true
                 }
             }
-            neighbor "10.10.10.1" {
-                group "ibgp"
-            }
             neighbor "10.10.10.2" {
                 group "ibgp"
             }
             neighbor "10.10.10.3" {
+                group "ibgp"
+            }
+            neighbor "10.10.10.4" {
                 group "ibgp"
             }
         }
@@ -223,7 +223,7 @@ configure {
         }
     }
     system {
-        name "P4"
+        name "P1"
         grpc {
             admin-state enable
             allow-unsecure-connection
@@ -540,7 +540,7 @@ configure {
                         }
                     }
                     user "vrnetlab" {
-                        password "$2y$10$GxxKSco3UIEnQAGYO1ajo.wsbkGRGftmQQ0HFm8vm3yajGX67WB.2"
+                        password "$2y$10$dB2mg75sYAZU7jKEgL9Bs.3Ki8fEa8gg8nsZnm8WMjIaLho.mrBPG"
                         access {
                             console true
                             netconf true
@@ -563,4 +563,4 @@ persistent-indices {
     }
 }
 
-# Finished FRI AUG 19 13:41:22 2022 UTC
+# Finished SUN AUG 21 20:52:01 2022 UTC

@@ -1,7 +1,7 @@
 import ipaddress
 
 
-class MyIPv4Network:
+class IPv4Network:
     @classmethod
     def __get_validators__(cls):
         # one or more validators may be yielded which will be called in the

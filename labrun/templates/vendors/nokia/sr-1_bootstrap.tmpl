@@ -11,7 +11,7 @@
 {% endfor %}
 {% for interface_name, int_data in interfaces.items() %}
 /configure/router[router-name=Base]/interface[interface-name={{interface_name}}]/port,1/1/c{{int_data.port}}/1
-/configure/router[router-name=Base]/interface[interface-name={{interface_name}}]/ipv4/primary/address,{{int_data.p2p_address}}
+/configure/router[router-name=Base]/interface[interface-name={{interface_name}}]/ipv4/primary/address,{{int_data.address}}
 /configure/router[router-name=Base]/interface[interface-name={{interface_name}}]/ipv4/primary/prefix-length,{{int_data.prefix_length}}
 /configure/router[router-name=Base]/interface[interface-name={{interface_name}}]/admin-state,enable
 **logic_block**

@@ -3,7 +3,7 @@
 # Built on Wed Sep 15 12:57:16 PDT 2021 by builder in /builds/c/217B/R2/panos/main/sros
 # Configuration format version 21.7 revision 0
 
-# Generated FRI AUG 19 13:41:09 2022 UTC
+# Generated SUN AUG 21 20:52:18 2022 UTC
 
 configure {
     card 1 {
@@ -165,27 +165,27 @@ configure {
         interface "system" {
             ipv4 {
                 primary {
-                    address 10.10.10.2
+                    address 10.10.10.4
                     prefix-length 32
                 }
             }
         }
-        interface "to_P1" {
-            admin-state enable
-            port 1/1/c1/1
-            ipv4 {
-                primary {
-                    address 10.0.0.1
-                    prefix-length 31
-                }
-            }
-        }
-        interface "to_P4" {
+        interface "to_P2" {
             admin-state enable
             port 1/1/c2/1
             ipv4 {
                 primary {
-                    address 10.0.0.4
+                    address 10.0.0.5
+                    prefix-length 31
+                }
+            }
+        }
+        interface "to_P3" {
+            admin-state enable
+            port 1/1/c1/1
+            ipv4 {
+                primary {
+                    address 10.0.0.7
                     prefix-length 31
                 }
             }
@@ -200,10 +200,10 @@ configure {
             neighbor "10.10.10.1" {
                 group "ibgp"
             }
-            neighbor "10.10.10.3" {
+            neighbor "10.10.10.2" {
                 group "ibgp"
             }
-            neighbor "10.10.10.4" {
+            neighbor "10.10.10.3" {
                 group "ibgp"
             }
         }
@@ -213,17 +213,17 @@ configure {
                 interface "system" {
                     passive true
                 }
-                interface "to_P1" {
+                interface "to_P2" {
                     interface-type point-to-point
                 }
-                interface "to_P4" {
+                interface "to_P3" {
                     interface-type point-to-point
                 }
             }
         }
     }
     system {
-        name "P2"
+        name "P4"
         grpc {
             admin-state enable
             allow-unsecure-connection
@@ -540,7 +540,7 @@ configure {
                         }
                     }
                     user "vrnetlab" {
-                        password "$2y$10$8miyGo0CFzaTwURhzrJzw.wDEGUcPbHlzQAnnVv1Zc5FCVcKVWK06"
+                        password "$2y$10$GxxKSco3UIEnQAGYO1ajo.wsbkGRGftmQQ0HFm8vm3yajGX67WB.2"
                         access {
                             console true
                             netconf true
@@ -558,9 +558,9 @@ configure {
 persistent-indices {
     description "Persistent indices are maintained by the system and must not be modified."
     vrtr-if-id {
-        router-name "Base" interface-name "to_P1" vrtr-id 1 if-index 3
-        router-name "Base" interface-name "to_P4" vrtr-id 1 if-index 2
+        router-name "Base" interface-name "to_P2" vrtr-id 1 if-index 2
+        router-name "Base" interface-name "to_P3" vrtr-id 1 if-index 3
     }
 }
 
-# Finished FRI AUG 19 13:41:09 2022 UTC
+# Finished SUN AUG 21 20:52:18 2022 UTC
