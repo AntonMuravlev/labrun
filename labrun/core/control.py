@@ -2,8 +2,8 @@ import yaml
 from jinja2 import Environment, FileSystemLoader
 from pygnmi.client import gNMIException
 
-from labparams import LabParams
-from node import Node
+from .labparams import LabParams
+from .node import Node
 
 
 class Control:

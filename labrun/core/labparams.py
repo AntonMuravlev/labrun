@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 
-from network import IPv4Network
-from topology import Topology
+from .network import IPv4Network
+from .topology import Topology
 
 
 class LabParams(BaseModel):

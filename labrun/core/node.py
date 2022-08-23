@@ -1,7 +1,8 @@
 import yaml
 from jinja2 import Environment, FileSystemLoader
+from pkg_resources import resource_filename
 
-from gnmirunner import GnmiRunner
+from .gnmirunner import GnmiRunner
 
 
 class Node:
@@ -42,7 +43,9 @@ class Node:
         self._target_xpath = []
         self._bootstrap_xpath = []
         self._node_config_params = {"name": self.node_name}
-        self._model_jinja_tmpl_path = f"../templates/vendors/{self.vendor}"
+        self._model_jinja_tmpl_path = resource_filename(
+            "labrun", f"templates/vendors/{self.vendor}"
+        )
         self._model_jinja_tmpl = f"{self.model}_bootstrap.tmpl"
         self._model_params_filename = (
             f"{self._model_jinja_tmpl_path}/{self.model}_bootstrap.yaml"
