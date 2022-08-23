@@ -1,9 +1,15 @@
 import yaml
+import logging
+
 from jinja2 import Environment, FileSystemLoader
 from pygnmi.client import gNMIException
 
 from .labparams import LabParams
 from .node import Node
+from .util import log_config
+
+# create logger
+logger = log_config(__name__)
 
 
 class Control:
@@ -16,6 +22,7 @@ class Control:
     @property
     def file_data(self):
         if not self._file_data:
+            logger.debug("Reading input lab file")
             with open(self.topo_file_name) as f:
                 self._file_data = yaml.safe_load(f)
         return self._file_data
@@ -23,6 +30,7 @@ class Control:
     @property
     def node_instances(self):
         if not self._node_instances:
+            logger.debug("Creating node instances")
             for node_name in self.labparams.nodes.keys():
                 self._node_instances.append(
                     Node(
@@ -34,16 +42,17 @@ class Control:
                         self.labparams.p2p_prefix,
                     )
                 )
+            logger.debug("Creating node instances is completed")
         return self._node_instances
 
     def bootstrap_precheck(self, node):
-        print(f"{node.node_name} bootstrap_precheck is on going")
+        logger.info(f"{node.node_name} bootstrap_precheck is on going")
         precheck_flags = []
         precheck_flags.append(node._gnmi_probe())
         return True if all(precheck_flags) else False
 
     def bootstrap_postcheck(self, node):
-        print(f"{node.node_name} bootstrap_postcheck is on going")
+        logger.info(f"{node.node_name} bootstrap_postcheck is on going")
         postcheck_flags = []
         if not node.gnmi_errors:
             postcheck_flags.append(True)
@@ -52,24 +61,29 @@ class Control:
     def bootstrap_nodes(self):
         for node in self.node_instances:
             if self.bootstrap_precheck(node):
-                print(f"{node.node_name} bootstrap_precheck is successful")
+                logger.info(f"{node.node_name} bootstrap_precheck is successful")
                 with node.gnmi_instance as conn:
-                    print(f"Starting {node.node_name} bootstrap")
+                    logger.info(f"Starting {node.node_name} bootstrap")
                     for block in node.bootstrap_xpath:
-                        print(f"\nSet block\n{block}\n")
+                        logger.debug(f"\nSet block on {node.node_name}\n{block}\n")
                         try:
                             rpc_reply = conn.set(update=block)
                         except gNMIException as error:
+                            logger.debug(
+                                f"Setting block on {node.node_name} is failed with error:\n {error}"
+                            )
                             node.gnmi_errors[tuple(block)] = error
-                        print(f"Node_reply\n{rpc_reply}\n")
+                        logger.debug(f"{node.node_name} reply\n{rpc_reply}\n")
                     if self.bootstrap_postcheck(node):
-                        print(f"{node.node_name} bootstrap_postcheck is successful")
-                        print(f"{node.node_name} bootstrap is completed")
+                        logger.info(
+                            f"{node.node_name} bootstrap_postcheck is successful"
+                        )
+                        logger.info(f"{node.node_name} bootstrap is completed")
                     else:
-                        print(f"{node.node_name} failed bootstrap_postcheck!")
-                        print(f"{node.node_name} bootstrap failed")
+                        logger.warning(f"{node.node_name} failed bootstrap_postcheck!")
+                        logger.warning(f"{node.node_name} bootstrap failed")
             else:
-                print(f"{node.node_name} failed bootstrap_precheck!")
+                logger.warning(f"{node.node_name} failed bootstrap_precheck!")
 
     def push_config_to_nodes(self):
         for node in self.node_instances:
