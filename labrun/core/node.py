@@ -3,6 +3,10 @@ from jinja2 import Environment, FileSystemLoader
 from pkg_resources import resource_filename
 
 from .gnmirunner import GnmiRunner
+from .util import log_config
+
+# create logger
+logger = log_config(__name__)
 
 
 class Node:
@@ -153,6 +157,19 @@ class Node:
                 insecure=True,
             )
         return self._gnmi_instance
+
+    def set_config_blocks(self, config_blocks):
+        with self.gnmi_instance as conn:
+            for block in config_blocks:
+                logger.debug(f"\nSet block on {self.node_name}\n{block}\n")
+                try:
+                    rpc_reply = conn.set(update=block)
+                except gNMIException as error:
+                    logger.debug(
+                        f"Setting block on {self.node_name} is failed with error:\n {error}"
+                    )
+                    self.gnmi_errors[tuple(block)] = error
+                logger.debug(f"{self.node_name} reply\n{rpc_reply}\n")
 
     # add try/except
     def _gnmi_probe(self):

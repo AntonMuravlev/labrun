@@ -18,13 +18,19 @@ def log_config(module_name):
     stderr.setLevel(logging.INFO)
     stderr.setFormatter(formatter_stderr)
 
-    # create file handler
-    log_filename = resource_filename("labrun", "logs/all_labrun.log")
-    logfile = logging.FileHandler(log_filename)
-    logfile.setLevel(logging.DEBUG)
-    logfile.setFormatter(formatter_file)
+    # create file handler (common log for all modules)
+    log_filename = resource_filename("labrun", "logs/common_labrun.log")
+    logfile_common = logging.FileHandler(log_filename)
+    logfile_common.setLevel(logging.DEBUG)
+    logfile_common.setFormatter(formatter_file)
 
+    # create file handler (dedicated log for module)
+    log_filename = resource_filename("labrun", f"logs/{module_name}.log")
+    logfile_module = logging.FileHandler(log_filename)
+    logfile_module.setLevel(logging.DEBUG)
+    logfile_module.setFormatter(formatter_file)
 
     log.addHandler(stderr)
-    log.addHandler(logfile)
+    log.addHandler(logfile_common)
+    log.addHandler(logfile_module)
     return log

@@ -1,8 +1,8 @@
 import yaml
-import logging
 
 from jinja2 import Environment, FileSystemLoader
 from pygnmi.client import gNMIException
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 from .labparams import LabParams
 from .node import Node
@@ -59,32 +59,27 @@ class Control:
         return True if all(postcheck_flags) else False
 
     def bootstrap_nodes(self):
-        for node in self.node_instances:
-            if self.bootstrap_precheck(node):
-                logger.info(f"{node.node_name} bootstrap_precheck is successful")
-                with node.gnmi_instance as conn:
+        nodes_ready_to_bootstrap = []
+        with ThreadPoolExecutor(max_workers=4) as executor:
+            for node in self.node_instances:
+                if self.bootstrap_precheck(node):
+                    nodes_ready_to_bootstrap.append(node)
+                    logger.info(f"{node.node_name} bootstrap_precheck is successful")
                     logger.info(f"Starting {node.node_name} bootstrap")
-                    for block in node.bootstrap_xpath:
-                        logger.debug(f"\nSet block on {node.node_name}\n{block}\n")
-                        try:
-                            rpc_reply = conn.set(update=block)
-                        except gNMIException as error:
-                            logger.debug(
-                                f"Setting block on {node.node_name} is failed with error:\n {error}"
-                            )
-                            node.gnmi_errors[tuple(block)] = error
-                        logger.debug(f"{node.node_name} reply\n{rpc_reply}\n")
-                    if self.bootstrap_postcheck(node):
-                        logger.info(
-                            f"{node.node_name} bootstrap_postcheck is successful"
-                        )
-                        logger.info(f"{node.node_name} bootstrap is completed")
-                    else:
-                        logger.warning(f"{node.node_name} failed bootstrap_postcheck!")
-                        logger.warning(f"{node.node_name} bootstrap failed")
+                    future = executor.submit(
+                        node.set_config_blocks, node.bootstrap_xpath
+                    )
+                else:
+                    logger.warning(f"{node.node_name} failed bootstrap_precheck!")
+        for node in nodes_ready_to_bootstrap:
+            if self.bootstrap_postcheck(node):
+                logger.info(f"{node.node_name} bootstrap is completed")
             else:
-                logger.warning(f"{node.node_name} failed bootstrap_precheck!")
+                logger.warning(
+                    f"{node.node_name} failed bootstrap_postcheck!"
+                )
 
+    # should be merged with bootstrap_nodes
     def push_config_to_nodes(self):
         for node in self.node_instances:
             if self.bootstrap_postcheck(node):
