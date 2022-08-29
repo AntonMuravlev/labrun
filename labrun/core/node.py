@@ -158,7 +158,24 @@ class Node:
             )
         return self._gnmi_instance
 
-    def set_config_blocks(self, config_blocks):
+    # add try/except
+    def _gnmi_probe(self):
+        with self.gnmi_instance as connection:
+            capabilities = connection.capabilities()
+        return True if capabilities else False
+
+    def bootstrap_precheck(self):
+        precheck_flags = []
+        precheck_flags.append(self._gnmi_probe())
+        return True if all(precheck_flags) else False
+
+    def bootstrap_postcheck(self):
+        postcheck_flags = []
+        if not self.gnmi_errors:
+            postcheck_flags.append(True)
+        return True if all(postcheck_flags) else False
+
+    def set_config_blocks(self, config_blocks, bootstrap=False):
         with self.gnmi_instance as conn:
             for block in config_blocks:
                 logger.debug(f"\nSet block on {self.node_name}\n{block}\n")
@@ -170,12 +187,13 @@ class Node:
                     )
                     self.gnmi_errors[tuple(block)] = error
                 logger.debug(f"{self.node_name} reply\n{rpc_reply}\n")
+        if bootstrap:
+            if self.bootstrap_postcheck():
+                self.bootstrap_completed = True
+                logger.info(f"{self.node_name} bootstrap is completed")
+            else:
+                logger.info(f"{self.node_name} bootstrap is failed")
 
-    # add try/except
-    def _gnmi_probe(self):
-        with self.gnmi_instance as connection:
-            capabilities = connection.capabilities()
-        return True if capabilities else False
 
     @property
     def current_config(self):
