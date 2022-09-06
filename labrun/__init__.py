@@ -1,3 +1,1 @@
-from labrun.core.control import Control
-
-__all__ = ("Control")
+__version__ = "0.0.1"
