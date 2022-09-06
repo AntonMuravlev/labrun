@@ -177,6 +177,7 @@ class Node:
 
     def set_config_blocks(self, config_blocks, bootstrap=False):
         with self.gnmi_instance as conn:
+            logger.info(f"{self.node_name} gNMI connection is running")
             for block in config_blocks:
                 logger.debug(f"\nSet block on {self.node_name}\n{block}\n")
                 try:
@@ -187,13 +188,14 @@ class Node:
                     )
                     self.gnmi_errors[tuple(block)] = error
                 logger.debug(f"{self.node_name} reply\n{rpc_reply}\n")
+        logger.info(f"{self.node_name} gNMI connection is closed")
         if bootstrap:
             if self.bootstrap_postcheck():
                 self.bootstrap_completed = True
-                logger.info(f"{self.node_name} bootstrap is completed")
             else:
+                self.bootstrap_completed = False
                 logger.info(f"{self.node_name} bootstrap is failed")
-
+        return self.node_name
 
     @property
     def current_config(self):
