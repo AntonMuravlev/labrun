@@ -3,47 +3,34 @@ lab_name: ospf_bgp
 loopback_prefix: 10.10.10.0/24
 p2p_prefix: 10.0.0.0/24
 
-template:
-  node_x:
-    configuration:
-      configure:
-        router[router-name=Base]:
-          autonomous-system: 100
-          ospf[ospf-instance=0]:
-            admin-state: enable
-            area[area-id=0]:
-              interface[interface-name=system]:
-                  passive: true
-              interface[interface-name=*]:
-                  interface-type: point-to-point
-          bgp:
-            group[group-name=ibgp]:
-              family:
-                vpn-ipv4: true
-              type: internal
-            neighbor[ip-address=10.10.10.2]:
-              group: ibgp
+config_template:
+  configure:
+    router[router-name=Base]:
+      autonomous-system: 100
+      ospf[ospf-instance=0]:
+        admin-state: enable
+        area[area-id=0]:
+          interface[interface-name=system]:
+              passive: true
+      bgp:
+        group[group-name=ibgp]:
+          family:
+            vpn-ipv4: true
+          type: internal
 
 nodes:
   P1:
+    config_template: True
     configuration:
       configure:
         router[router-name=Base]:
-          autonomous-system: 100
           ospf[ospf-instance=0]:
-            admin-state: enable
             area[area-id=0]:
-              interface[interface-name=system]:
-                  passive: true
               interface[interface-name=to_P2]:
                   interface-type: point-to-point
               interface[interface-name=to_P3]:
                   interface-type: point-to-point
           bgp:
-            group[group-name=ibgp]:
-              family:
-                vpn-ipv4: true
-              type: internal
             neighbor[ip-address=10.10.10.2]:
               group: ibgp
             neighbor[ip-address=10.10.10.3]:
@@ -51,6 +38,7 @@ nodes:
             neighbor[ip-address=10.10.10.4]:
               group: ibgp
   P2:
+    config_template: True
     configuration:
       configure:
         router[router-name=Base]:
@@ -76,6 +64,7 @@ nodes:
             neighbor[ip-address=10.10.10.4]:
               group: ibgp
   P3:
+    config_template: True
     configuration:
       configure:
         router[router-name=Base]:
@@ -101,6 +90,7 @@ nodes:
             neighbor[ip-address=10.10.10.4]:
               group: ibgp
   P4:
+    config_template: True
     configuration:
       configure:
         router[router-name=Base]:

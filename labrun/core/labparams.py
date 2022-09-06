@@ -11,5 +11,6 @@ class LabParams(BaseModel):
     lab_name: str
     loopback_prefix: IPv4Network
     p2p_prefix: IPv4Network
+    config_template: dict
     nodes: dict
     topology: Topology

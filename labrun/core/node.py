@@ -16,6 +16,7 @@ class Node:
         self,
         node_name,
         node_dict,
+        config_template,
         lab_name,
         topology,
         loopback_prefix,
@@ -31,7 +32,9 @@ class Node:
     ):
         self.node_name = node_name
         self.lab_name = lab_name
+        self.config_template = config_template
         self.node_dict = node_dict
+        self.config_template_flag = self.node_dict["config_template"]
         self.loopback_prefix = loopback_prefix
         self.p2p_prefix = p2p_prefix
         self.virtual_env = virtual_env
@@ -85,13 +88,19 @@ class Node:
         else:
             yield path, input_dict
 
+    def _build_target_xpath(self, input_dict):
+        xpath_list = [
+            [("/" + "/".join(xpath), value)]
+            for xpath, value in self._xpath_gen(input_dict)
+        ]
+        return xpath_list
+
     @property
     def target_xpath(self):
         if not self._target_xpath:
-            self._target_xpath = [
-                [("/" + "/".join(xpath), value)]
-                for xpath, value in self._xpath_gen(self.target_configuration)
-            ]
+            if self.config_template_flag:
+                self._target_xpath.extend(self._build_target_xpath(self.config_template))
+            self._target_xpath.extend(self._build_target_xpath(self.target_configuration))
         return self._target_xpath
 
     @property

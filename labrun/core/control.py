@@ -36,6 +36,7 @@ class Control:
                     Node(
                         node_name,
                         self.labparams.nodes[node_name],
+                        self.labparams.config_template,
                         self.labparams.lab_name,
                         self.labparams.topology,
                         self.labparams.loopback_prefix,
