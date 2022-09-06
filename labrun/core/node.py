@@ -99,8 +99,12 @@ class Node:
     def target_xpath(self):
         if not self._target_xpath:
             if self.config_template_flag:
-                self._target_xpath.extend(self._build_target_xpath(self.config_template))
-            self._target_xpath.extend(self._build_target_xpath(self.target_configuration))
+                self._target_xpath.extend(
+                    self._build_target_xpath(self.config_template)
+                )
+            self._target_xpath.extend(
+                self._build_target_xpath(self.target_configuration)
+            )
         return self._target_xpath
 
     @property
@@ -125,7 +129,7 @@ class Node:
                     }
                 )
             self._bootstrap_interfaces_data["loopback"].update(
-                {"address": self.loopback_prefix.allocate_next_free_ip()}
+                {"address": self.loopback_prefix.allocate_next_free_ip(loopback=True)}
             )
         return self._bootstrap_interfaces_data
 

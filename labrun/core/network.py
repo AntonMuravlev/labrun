@@ -16,8 +16,9 @@ class IPv4Network:
     def __init__(self, network):
         _net = ipaddress.ip_network(network)
         self.network = network
+        self.network_address = str(_net.network_address)
         self.hosts = tuple(
-            [str(_net.network_address)]
+            [self.network_address]
             + [str(h) for h in _net.hosts()]
             + [str(_net.broadcast_address)],
         )
@@ -69,10 +70,13 @@ class IPv4Network:
             self.allocate_next_free_ip(),
             self.allocate_next_free_ip(),
         )
-        return self.p2p_networks[link_name][0]
+        first_address_in_network = self.p2p_networks[link_name][0]
+        return first_address_in_network
 
-    def allocate_next_free_ip(self):
+    def allocate_next_free_ip(self, loopback=False):
         for host in self.hosts:
+            if loopback and (host == self.network_address):
+                continue
             if host not in self.allocated:
                 next_free_ip = host
                 self.allocate_ip(next_free_ip)
