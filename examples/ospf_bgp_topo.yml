@@ -42,21 +42,13 @@ nodes:
     configuration:
       configure:
         router[router-name=Base]:
-          autonomous-system: 100
           ospf[ospf-instance=0]:
-            admin-state: enable
             area[area-id=0]:
-              interface[interface-name=system]:
-                  passive: true
               interface[interface-name=to_P1]:
                   interface-type: point-to-point
               interface[interface-name=to_P4]:
                   interface-type: point-to-point
           bgp:
-            group[group-name=ibgp]:
-              family:
-                vpn-ipv4: true
-              type: internal
             neighbor[ip-address=10.10.10.1]:
               group: ibgp
             neighbor[ip-address=10.10.10.3]:
@@ -68,21 +60,13 @@ nodes:
     configuration:
       configure:
         router[router-name=Base]:
-          autonomous-system: 100
           ospf[ospf-instance=0]:
-            admin-state: enable
             area[area-id=0]:
-              interface[interface-name=system]:
-                  passive: true
               interface[interface-name=to_P1]:
                   interface-type: point-to-point
               interface[interface-name=to_P4]:
                   interface-type: point-to-point
           bgp:
-            group[group-name=ibgp]:
-              family:
-                vpn-ipv4: true
-              type: internal
             neighbor[ip-address=10.10.10.2]:
               group: ibgp
             neighbor[ip-address=10.10.10.1]:
@@ -94,21 +78,13 @@ nodes:
     configuration:
       configure:
         router[router-name=Base]:
-          autonomous-system: 100
           ospf[ospf-instance=0]:
-            admin-state: enable
             area[area-id=0]:
-              interface[interface-name=system]:
-                  passive: true
               interface[interface-name=to_P2]:
                   interface-type: point-to-point
               interface[interface-name=to_P3]:
                   interface-type: point-to-point
           bgp:
-            group[group-name=ibgp]:
-              family:
-                vpn-ipv4: true
-              type: internal
             neighbor[ip-address=10.10.10.2]:
               group: ibgp
             neighbor[ip-address=10.10.10.3]:
