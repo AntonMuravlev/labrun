@@ -1,7 +1,6 @@
 import yaml
 
 from jinja2 import Environment, FileSystemLoader
-from pygnmi.client import gNMIException
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 from .labparams import LabParams
@@ -57,18 +56,32 @@ class Control:
                 else:
                     logger.warning(f"{node.node_name} failed bootstrap_precheck!")
 
-    def push_config_to_nodes(self):
+    def push_config_to_nodes(self, nobootstrap=False):
         futures = []
         with ThreadPoolExecutor(max_workers=len(self.node_instances)) as executor:
             for node in self.node_instances:
-                if node.bootstrap_completed:
+                if node.bootstrap_completed or nobootstrap:
                     logger.info(f"{node.node_name} configuration is starting")
-                    future = executor.submit(node.set_config_blocks, node.target_xpath)
+                    future = executor.submit(
+                        node.set_config_blocks,
+                        [node.target_xpath],  # push config as a one block
+                    )
                     futures.append(future)
                 else:
                     logger.warning(f"{node.node_name} is not ready to configure")
             for _ in as_completed(futures):
-                logger.info(f"{_.result()} configuration is completed")
+                try:
+                    result = _.result()
+                except Exception as error:
+                    logger.debug(f"Future returns exception. Exception - {error}")
 
-    def config_post_check(self, node):
-        return True
+    def config_post_check(self):
+        for node in self.node_instances:
+            if not node.gnmi_errors:
+                logger.info(
+                    f"{node.node_name} configuration is completed without gnmi errors"
+                )
+            else:
+                logger.info(
+                    f"{node.node_name} configuration is failed. Please check log files"
+                )

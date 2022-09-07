@@ -7,11 +7,17 @@ config_template:
   configure:
     router[router-name=Base]:
       autonomous-system: 100
+      mpls-labels:
+        sr-labels:
+          start: 20000
+          end: 30000
       ospf[ospf-instance=0]:
+        advertise-router-capability: area
+        segment-routing:
+          admin-state: enable
+          prefix-sid-range:
+            global: [null]
         admin-state: enable
-        area[area-id=0]:
-          interface[interface-name=system]:
-              passive: true
       bgp:
         group[group-name=ibgp]:
           family:
@@ -26,6 +32,10 @@ nodes:
         router[router-name=Base]:
           ospf[ospf-instance=0]:
             area[area-id=0]:
+              interface[interface-name=system]:
+                  passive: true
+                  node-sid:
+                    index: "1"
               interface[interface-name=to_P2]:
                   interface-type: point-to-point
               interface[interface-name=to_P3]:
@@ -44,6 +54,10 @@ nodes:
         router[router-name=Base]:
           ospf[ospf-instance=0]:
             area[area-id=0]:
+              interface[interface-name=system]:
+                  passive: true
+                  node-sid:
+                    index: "2"
               interface[interface-name=to_P1]:
                   interface-type: point-to-point
               interface[interface-name=to_P4]:
@@ -62,6 +76,10 @@ nodes:
         router[router-name=Base]:
           ospf[ospf-instance=0]:
             area[area-id=0]:
+              interface[interface-name=system]:
+                  passive: true
+                  node-sid:
+                    index: "3"
               interface[interface-name=to_P1]:
                   interface-type: point-to-point
               interface[interface-name=to_P4]:
@@ -80,6 +98,10 @@ nodes:
         router[router-name=Base]:
           ospf[ospf-instance=0]:
             area[area-id=0]:
+              interface[interface-name=system]:
+                  passive: true
+                  node-sid:
+                    index: "4"
               interface[interface-name=to_P2]:
                   interface-type: point-to-point
               interface[interface-name=to_P3]:

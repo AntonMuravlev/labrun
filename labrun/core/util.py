@@ -2,7 +2,15 @@ import logging
 from pkg_resources import resource_filename
 from datetime import datetime
 
+
 def log_config(module_name):
+
+    # disable 3-rd party loggers
+    for log_name, log_obj in logging.Logger.manager.loggerDict.items():
+        if "labrun" not in log_name:
+            log_obj.disabled = True
+
+    #create logger
     logger = logging.getLogger(module_name)
     logger.setLevel(logging.DEBUG)
 
@@ -13,7 +21,7 @@ def log_config(module_name):
     formatter_file = logging.Formatter(
         "{asctime} - {name} - {levelname} - {message}", style="{"
     )
-    current_time = datetime.now().strftime('%Y_%m_%d-%H:%M:%S')
+    current_time = datetime.now().strftime("%Y_%m_%d-%H:%M:%S")
 
     # create stderr handler
     stderr = logging.StreamHandler()

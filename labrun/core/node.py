@@ -1,6 +1,8 @@
 import yaml
+import logging
 from jinja2 import Environment, FileSystemLoader
 from pkg_resources import resource_filename
+from pygnmi.client import gNMIException
 
 from .gnmirunner import GnmiRunner
 from .util import log_config
@@ -61,7 +63,7 @@ class Node:
         self.address = f"{self.virtual_env}-{self.lab_name}-{self.node_name}"
         self._gnmi_instance = None
         self.bootstrap_completed = None
-        self.gnmi_errors = {}
+        self.gnmi_errors = []
 
     @staticmethod
     def _read_yaml(filename):
@@ -90,7 +92,7 @@ class Node:
 
     def _build_target_xpath(self, input_dict):
         xpath_list = [
-            [("/" + "/".join(xpath), value)]
+            ("/" + "/".join(xpath), value)
             for xpath, value in self._xpath_gen(input_dict)
         ]
         return xpath_list
@@ -199,7 +201,10 @@ class Node:
                     logger.debug(
                         f"Setting block on {self.node_name} is failed with error:\n {error}"
                     )
-                    self.gnmi_errors[tuple(block)] = error
+                    logger.warning(
+                        f"Setting block on {self.node_name} is failed. Check logs for details"
+                    )
+                    self.gnmi_errors.append(error)
                 logger.debug(f"{self.node_name} reply\n{rpc_reply}\n")
         logger.info(f"{self.node_name} gNMI connection is closed")
         if bootstrap:
