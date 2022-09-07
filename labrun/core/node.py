@@ -1,5 +1,4 @@
 import yaml
-import logging
 from jinja2 import Environment, FileSystemLoader
 from pkg_resources import resource_filename
 from pygnmi.client import gNMIException
@@ -23,14 +22,7 @@ class Node:
         topology,
         loopback_prefix,
         p2p_prefix,
-        virtual_env="clab",
-        vendor="nokia",
-        model="sr-1",
-        sw="21.10.R1",
-        license_path="lic.txt",
-        username="admin",
-        password="admin",
-        gnmi_port="57400",
+        virtual_env,
     ):
         self.node_name = node_name
         self.lab_name = lab_name
@@ -40,13 +32,13 @@ class Node:
         self.loopback_prefix = loopback_prefix
         self.p2p_prefix = p2p_prefix
         self.virtual_env = virtual_env
-        self.vendor = vendor
-        self.model = model
-        self.sw = sw
-        self.license_path = license_path
-        self.username = username
-        self.password = password
-        self.gnmi_port = gnmi_port
+        self.vendor = self.node_dict["vendor"]
+        self.model = self.node_dict["model"]
+        self.sw = "21.10.R1"
+        self.license_path = "lic.txt"
+        self.username = "admin"
+        self.password = "admin"
+        self.gnmi_port = "57400"
         self.target_configuration = self.node_dict["configuration"]
         self.node_links_dict = topology.collect_links(self.node_name)
         self._target_xpath = []
@@ -215,6 +207,3 @@ class Node:
                 logger.info(f"{self.node_name} bootstrap is failed")
         return self.node_name
 
-    @property
-    def current_config(self):
-        pass

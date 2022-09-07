@@ -1,7 +1,9 @@
 import yaml
+import sys
 
 from jinja2 import Environment, FileSystemLoader
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from pydantic import ValidationError
 
 from .labparams import LabParams
 from .node import Node
@@ -15,16 +17,32 @@ class Control:
     def __init__(self, topo_file_name):
         self.topo_file_name = topo_file_name
         self._file_data = None
-        self.labparams = LabParams.parse_obj(self.file_data)
+        self._labparams = None
         self._node_instances = []
 
     @property
     def file_data(self):
         if not self._file_data:
             logger.debug("Reading input lab file")
-            with open(self.topo_file_name) as f:
-                self._file_data = yaml.safe_load(f)
+            try:
+                with open(self.topo_file_name) as f:
+                    self._file_data = yaml.safe_load(f)
+            except FileNotFoundError as e:
+                logger.critical(f"Input lab file not found")
+                sys.exit(1)
         return self._file_data
+
+    @property
+    def labparams(self):
+        try:
+            self._labparams = LabParams.parse_obj(self.file_data)
+        except ValidationError as e:
+            logger.critical(
+                f"Input lab file has incorrect values\n"
+                f"Pydantic errors: {e}"
+            )
+            sys.exit(1)
+        return self._labparams
 
     @property
     def node_instances(self):
@@ -40,6 +58,7 @@ class Control:
                         self.labparams.topology,
                         self.labparams.loopback_prefix,
                         self.labparams.p2p_prefix,
+                        self.labparams.virtual_env,
                     )
                 )
             logger.debug("Creating node instances is completed")

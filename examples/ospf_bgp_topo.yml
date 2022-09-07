@@ -1,4 +1,5 @@
 lab_name: ospf_bgp
+virtual_env: clab
 
 loopback_prefix: 10.10.10.0/24
 p2p_prefix: 10.0.0.0/24
@@ -27,6 +28,8 @@ config_template:
 nodes:
   P1:
     config_template: True
+    vendor: nokia
+    model: sr-1
     configuration:
       configure:
         router[router-name=Base]:
@@ -49,6 +52,8 @@ nodes:
               group: ibgp
   P2:
     config_template: True
+    vendor: nokia
+    model: sr-1
     configuration:
       configure:
         router[router-name=Base]:
@@ -71,6 +76,8 @@ nodes:
               group: ibgp
   P3:
     config_template: True
+    vendor: nokia
+    model: sr-1
     configuration:
       configure:
         router[router-name=Base]:
@@ -93,6 +100,8 @@ nodes:
               group: ibgp
   P4:
     config_template: True
+    vendor: nokia
+    model: sr-1
     configuration:
       configure:
         router[router-name=Base]:
