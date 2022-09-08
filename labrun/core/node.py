@@ -40,13 +40,15 @@ class Node:
         self.password = "admin"
         self.gnmi_port = "57400"
         self.target_configuration = self.node_dict["configuration"]
-        self.node_links_dict = topology.collect_links(self.node_name)
+        self.node_links_dict = topology.collect_links(
+            self.node_name
+        )  # move to dedicated property with try/except
         self._target_xpath = []
         self._bootstrap_xpath = []
         self._node_config_params = {"name": self.node_name}
         self._model_jinja_tmpl_path = resource_filename(
             "labrun", f"templates/vendors/{self.vendor}"
-        )
+        ) # move to dedicated property with try/except
         self._model_jinja_tmpl = f"{self.model}_bootstrap.tmpl"
         self._model_params_filename = (
             f"{self._model_jinja_tmpl_path}/{self.model}_bootstrap.yaml"
@@ -206,4 +208,3 @@ class Node:
                 self.bootstrap_completed = False
                 logger.info(f"{self.node_name} bootstrap is failed")
         return self.node_name
-

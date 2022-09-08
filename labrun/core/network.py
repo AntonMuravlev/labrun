@@ -11,6 +11,10 @@ class IPv4Network:
 
     @classmethod
     def validate(cls, value):
+        try:
+            _net = ipaddress.ip_network(value)
+        except ValueError as error:
+            raise ValueError(f"IP prefix validation is failed\n{error}")
         return cls(value)
 
     def __init__(self, network):
@@ -88,6 +92,3 @@ class IPv4Network:
                 return self.p2p_networks[link][0]
             elif local_side == link[1] and remote_side == link[0]:
                 return self.p2p_networks[link][1]
-
-
-
