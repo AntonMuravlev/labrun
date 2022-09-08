@@ -47,7 +47,7 @@ class Control:
     @property
     def node_instances(self):
         if not self._node_instances:
-            logger.debug("Creating node instances")
+            logger.info("[bold blue blink]Creating node instances[/]")
             for node_name in self.labparams.nodes.keys():
                 self._node_instances.append(
                     Node(
@@ -68,7 +68,7 @@ class Control:
         with ThreadPoolExecutor(max_workers=len(self.node_instances)) as executor:
             for node in self.node_instances:
                 if node.bootstrap_precheck():
-                    logger.info(f"{node.node_name} bootstrap precheck is successful")
+                    logger.info(f"[green]{node.node_name} bootstrap precheck is successful[/green]")
                     future = executor.submit(
                         node.set_config_blocks, node.bootstrap_xpath, bootstrap=True
                     )

@@ -2,6 +2,8 @@ import logging
 from pkg_resources import resource_filename
 from datetime import datetime
 
+from rich.logging import RichHandler
+
 
 def log_config(module_name):
 
@@ -16,15 +18,19 @@ def log_config(module_name):
 
     # create formatters
     formatter_stderr = logging.Formatter(
-        "{asctime} - {name} - {levelname} - {message}", datefmt="%H:%M:%S", style="{"
-    )
+            "[cyan]%(name)-20s[/cyan] - %(message)s", datefmt="%H:%M:%S"
+            )
     formatter_file = logging.Formatter(
         "{asctime} - {name} - {levelname} - {message}", style="{"
     )
     current_time = datetime.now().strftime("%Y_%m_%d-%H:%M:%S")
 
     # create stderr handler
-    stderr = logging.StreamHandler()
+    stderr = RichHandler(
+            omit_repeated_times=False,
+            show_path=False,
+            markup=True
+            )
     stderr.setLevel(logging.INFO)
     stderr.setFormatter(formatter_stderr)
 
