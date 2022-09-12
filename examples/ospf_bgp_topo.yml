@@ -24,6 +24,21 @@ config_template:
           family:
             vpn-ipv4: true
           type: internal
+    service:
+      vprn[service-name=B2B]:
+        customer: "1"
+        service-id: 200
+        autonomous-system: 200
+        bgp-ipvpn:
+          mpls:
+            auto-bind-tunnel:
+              resolution: any
+            route-distinguisher: "200:200"
+            vrf-target:
+              community: "target:200:200"
+            admin-state: enable
+        admin-state: enable
+
 
 nodes:
   P1:
@@ -50,6 +65,14 @@ nodes:
               group: ibgp
             neighbor[ip-address=10.10.10.4]:
               group: ibgp
+        service:
+          vprn[service-name=B2B]:
+            interface[interface-name=loop1]:
+              loopback: True
+              ipv4:
+                primary:
+                  address: "99.99.99.1"
+                  prefix-length: 32
   P2:
     config_template: True
     vendor: nokia
@@ -74,6 +97,14 @@ nodes:
               group: ibgp
             neighbor[ip-address=10.10.10.4]:
               group: ibgp
+        service:
+          vprn[service-name=B2B]:
+            interface[interface-name=loop1]:
+              loopback: True
+              ipv4:
+                primary:
+                  address: "99.99.99.2"
+                  prefix-length: 32
   P3:
     config_template: True
     vendor: nokia
@@ -98,6 +129,14 @@ nodes:
               group: ibgp
             neighbor[ip-address=10.10.10.4]:
               group: ibgp
+        service:
+          vprn[service-name=B2B]:
+            interface[interface-name=loop1]:
+              loopback: True
+              ipv4:
+                primary:
+                  address: "99.99.99.3"
+                  prefix-length: 32
   P4:
     config_template: True
     vendor: nokia
@@ -122,6 +161,14 @@ nodes:
               group: ibgp
             neighbor[ip-address=10.10.10.1]:
               group: ibgp
+        service:
+          vprn[service-name=B2B]:
+            interface[interface-name=loop1]:
+              loopback: True
+              ipv4:
+                primary:
+                  address: "99.99.99.4"
+                  prefix-length: 32
 topology:
     "P1-eth1": "P2-eth1"
     "P1-eth2": "P3-eth2"

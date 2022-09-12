@@ -9,7 +9,7 @@ from labrun.core.control import Control
 def cli(labdata, nobootstrap):
     control = Control(labdata)
     if nobootstrap:
-        control.push_config_to_nodes(nobootstrap=True)
+        control.push_config_to_nodes(nobootstrap=nobootstrap)
         control.config_post_check()
     else:
         control.bootstrap_nodes()

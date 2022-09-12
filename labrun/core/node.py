@@ -186,25 +186,25 @@ class Node:
 
     def set_config_blocks(self, config_blocks, bootstrap=False):
         with self.gnmi_instance as conn:
-            logger.info(f"{self.node_name} gNMI connection is running")
+            logger.info(f"[cyan]{self.node_name} gNMI connection is running[/cyan]")
             for block in config_blocks:
                 logger.debug(f"\nSet block on {self.node_name}\n{block}\n")
                 try:
                     rpc_reply = conn.set(update=block)
                 except gNMIException as error:
-                    logger.debug(
+                    logger.warning(
                         f"Setting block on {self.node_name} is failed with error:\n {error}"
                     )
                     logger.warning(
-                        f"Setting block on {self.node_name} is failed. Check logs for details"
+                        f"[bold red]Setting block on {self.node_name} is failed. Check logs for details[/bold red]"
                     )
                     self.gnmi_errors.append(error)
                 logger.debug(f"{self.node_name} reply\n{rpc_reply}\n")
-        logger.info(f"{self.node_name} gNMI connection is closed")
+        logger.info(f"[yellow]{self.node_name} gNMI connection is closed[/yellow]")
         if bootstrap:
             if self.bootstrap_postcheck():
                 self.bootstrap_completed = True
             else:
                 self.bootstrap_completed = False
-                logger.info(f"{self.node_name} bootstrap is failed")
+                logger.info(f"[bold red]{self.node_name} bootstrap is failed[/bold red]")
         return self.node_name
